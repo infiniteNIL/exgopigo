@@ -89,13 +89,13 @@ defmodule ExGoPiGo do
   end
 
   defp setLED(pid, led, on) do
-    I2c.write(pid, <<@digital_write_cmd, led, on, 0>>)
+    # I2c.write(pid, <<@digital_write_cmd, led, on, 0>>)
     digitalWrite(pid, led, on)
   end
 
   # Arduino Digital Write
   defp digitalWrite(pid, pin, value) when pin in [0, 1, 5, 10, 15] and value in [0, 1] do
-    write_i2c_block(pid, @gopigo_board_address, <<@digital_write_cmd, pin, value, @unused>>)
+    write_i2c_block(pid, <<@digital_write_cmd, pin, value, @unused>>)
     :timer.sleep(5)	# Wait for 5 ms for the commands to complete
     true  # 1
   end
@@ -106,9 +106,9 @@ defmodule ExGoPiGo do
   end
 
   # Write I2C block
-  defp write_i2c_block(pid, address, block) do
+  defp write_i2c_block(pid, block) do
     try do
-      {:reply, response, state} = I2c.write(pid, address, 1, block)
+	:ok = I2c.write(pid, block)
     rescue
       IOError -> IO.puts "IOError"; false # -1
     end
