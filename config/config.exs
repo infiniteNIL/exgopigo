@@ -1,3 +1,4 @@
+
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
@@ -16,6 +17,9 @@ use Mix.Config
 #     config :logger, :console,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
+
+config :logger,
+	compile_time_purge_level: :info
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

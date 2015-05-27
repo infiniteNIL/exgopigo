@@ -1,5 +1,6 @@
 defmodule ExGoPiGo do
   alias ExGoPiGo.Brain
+  require Logger
 
   # GoPiGo Commands
   @fwd_cmd				      119	# Move forward with PID
@@ -46,6 +47,7 @@ defmodule ExGoPiGo do
 
   defp setup() do
     # TODO: Treat Brain as an app (i.e. automatically started in mix.exs)
+    Logger.info "Exy is starting up."
     Brain.init()
   end
 
@@ -54,6 +56,7 @@ defmodule ExGoPiGo do
   end
 
   defp cleanup(pid) do
+    Logger.info "Exy is shutting down."
   end
 
 end
