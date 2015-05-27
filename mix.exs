@@ -4,6 +4,8 @@ defmodule ExGoPiGo.Mixfile do
   def project do
     [app: :exgopigo,
      version: "0.0.1",
+     name: "ExGoPiGo",
+     source_url: "https://github.com/infinitenil/exgopigo",
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -28,7 +30,10 @@ defmodule ExGoPiGo.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:elixir_ale, "~> 0.3.0"}]
+    [
+      { :elixir_ale,  "~> 0.3.0" },
+      { :ex_doc,      github: "elixir-lang/ex_doc" }
+    ]
   end
 
   defp escript_config do
@@ -36,3 +41,4 @@ defmodule ExGoPiGo.Mixfile do
   end
 
 end
+

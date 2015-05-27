@@ -1,1 +1,2 @@
-%{"elixir_ale": {:hex, :elixir_ale, "0.3.0"}}
+%{"elixir_ale": {:hex, :elixir_ale, "0.3.0"},
+  "ex_doc": {:git, "git://github.com/elixir-lang/ex_doc.git", "18d9b9c101c2848e607aa4494414c2da11f8cab3", []}}

@@ -1,6 +1,9 @@
 defmodule ExGoPiGo.Board do
 	require Logger
 
+	@moduledoc """
+	Handles communicating with the GoPiGo board.
+	"""
 
   # The device's address.
   @gopigo_board_address 0x08
@@ -20,6 +23,11 @@ defmodule ExGoPiGo.Board do
   # The input mode for the pin.
   @pin_mode_input 0
 
+  @doc """
+  Initialize communications with the GoPiGoBoard.
+
+  Return the process ID for the I2C process of the board
+  """
 	def init() do
 		Logger.info "Establishing link to I2C port on GoPiGo board."
     {:ok, pid} = I2c.start_link("i2c-1", @gopigo_board_address)

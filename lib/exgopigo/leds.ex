@@ -1,6 +1,10 @@
 defmodule ExGoPiGo.LEDs do
 	alias ExGoPiGo.Board
 
+	@moduledoc """
+	Controls the 2 LEDs on the GoPiGo
+	"""
+
 	# TODO: Treat LEDs as an app? (i.e. separate process)
 
  	# LED Pins
