@@ -38,7 +38,7 @@ defmodule ExGoPiGo do
   @trim_write_cmd		    31  # Write the trim values
   @trim_read_cmd        32
 
-  def main() do
+  def main(_argv) do
     # TODO: Better way to manage state (pid)
     pid = setup()
     run(pid)
