@@ -1,5 +1,6 @@
 defmodule ExGoPiGo do
   alias ExGoPiGo.Brain
+  alias ExGoPiGo.Board
   require Logger
 
   # GoPiGo Commands
@@ -14,7 +15,13 @@ defmodule ExGoPiGo do
   defp setup() do
     # TODO: Treat Brain as an app (i.e. automatically started in mix.exs)
     Logger.info "Exy is starting up."
-    Brain.init()
+    pid = Brain.init()
+    Logger.info "GoPiGo Firmware v#{Board.firmware_version(pid)}"
+    Logger.info "Power: #{Board.voltage(pid)} volts"
+    Logger.info "Status: #{Board.read_status(pid)}"
+    Logger.info "Encoder Status: #{Board.read_encoder_status(pid)}"
+    Logger.info "Timeout Status: #{Board.read_timeout_status(pid)}"
+    pid
   end
 
   defp run(pid) do
