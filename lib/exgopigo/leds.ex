@@ -7,6 +7,8 @@ defmodule ExGoPiGo.LEDs do
 
 	# TODO: Treat LEDs as an app? (i.e. separate process)
 
+  @led_cmd  108 # Turn On/Off the LED's // TODO: Unused
+
  	# LED Pins
   @led_left_pin   10
   @led_right_pin  5

@@ -8,11 +8,17 @@ defmodule ExGoPiGo.Board do
   # The device's address.
   @gopigo_board_address 0x08
 
+  @read_enc_status_cmd  53  # Read encoder status 		TODO: unused
+  @timeout_status_cmd   82  # Read the timeout status TODO: unused
+
   @digital_write_cmd    12  # Digital write on a port
   @digital_read_cmd     13  # Digital read on a port
   @analog_read_cmd      14  # Analog read on a port
   @analog_write_cmd     15  # Analog read on a port
   @pin_mode_cmd         16  # Set up the pin mode on a port
+
+  @fw_ver_cmd		        20  # Read the firmware version
+  @volt_cmd	            118 # Read the voltage of the batteries
 
   # This allows us to be more specific about which commands contain unused bytes
   @unused 0
