@@ -53,13 +53,13 @@ defmodule ExGoPiGo.Board do
   end
 
   # Write I2C block
-  defp write_i2c_block(pid, block) do
+  def write_i2c_block(pid, block) do
     try do
       :ok = I2c.write(pid, block)
+      true	# 1
     rescue
       IOError -> IO.puts "IOError"; false # -1
     end
-    true  # 1
   end
 
 end
