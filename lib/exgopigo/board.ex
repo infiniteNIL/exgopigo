@@ -40,6 +40,38 @@ defmodule ExGoPiGo.Board do
     pid
   end
 
+  # Returns the firmware version
+	def firmware_version(pid) do
+		write_i2c_block(pid, <<@fw_ver_cmd, 0, 0, 0>>)
+		:timer.sleep(100)
+		try do
+			<<version>> = I2c.read(pid, 1)
+			I2c.read(pid, 1)	# Empty the buffer
+			version / 10
+		rescue 
+			IOError -> IO.puts "IOError"; -1
+		end
+	end
+
+	# Read voltage
+	#	return:	voltage in V
+	def voltage(pid) do
+		write_i2c_block(pid, <<@volt_cmd, 0, 0, 0>>)
+		:timer.sleep(100)
+		try do
+			<<b1>> = I2c.read(pid, 1)
+			<<b2>> = I2c.read(pid, 1)
+			if b1 != -1 and b2 != -1 do
+				v = b1 * 256 + b2
+				v = (5 * v / 1024) / 0.4
+				Float.round(v, 2)
+			else
+				-1
+			end
+		rescue 
+			IOError -> IO.puts "IOError"; -1
+		end
+	end
   # Arduino Digital Write
   def digitalWrite(pid, pin, value) when pin in [0, 1, 5, 10, 15] and value in [0, 1] do
     write_i2c_block(pid, <<@digital_write_cmd, pin, value, @unused>>)
