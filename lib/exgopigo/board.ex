@@ -1,5 +1,6 @@
 defmodule ExGoPiGo.Board do
 	require Logger
+	use Bitwise
 
 	@moduledoc """
 	Handles communicating with the GoPiGo board.
@@ -72,6 +73,32 @@ defmodule ExGoPiGo.Board do
 			IOError -> IO.puts "IOError"; -1
 		end
 	end
+
+	# Read the status register on the GoPiGo
+	#	Gets a byte, b0 - enc_status
+	#							 b1 - timeout_status
+	#	Return:	list with
+	#						l[0] - enc_status
+	#						l[1] - timeout_status
+	def read_status(pid) do
+		<<st>> = I2c.read(pid, 1)
+		{st &&& 0x01, div(st &&& 0x02, 2)}
+	end
+		 
+	# Read encoder status
+	#	return:	0 if encoder target is reached
+	def read_encoder_status(pid) do
+		st = read_status(pid)
+		elem(st, 0)
+	end
+
+	# Read timeout status
+	#	return:	0 if timeout is reached
+	def read_timeout_status(pid) do
+		st = read_status(pid)
+		elem(st, 1)
+	end
+
   # Arduino Digital Write
   def digitalWrite(pid, pin, value) when pin in [0, 1, 5, 10, 15] and value in [0, 1] do
     write_i2c_block(pid, <<@digital_write_cmd, pin, value, @unused>>)
