@@ -111,6 +111,14 @@ defmodule ExGoPiGo.Board do
     false # -2
   end
 
+  def read_i2c_block(pid, count) do
+    try do
+      I2c.read(pid, count)
+    rescue
+      IOError -> IO.puts "IOError"; 0
+    end
+  end
+
   # Write I2C block
   def write_i2c_block(pid, block) do
     try do
