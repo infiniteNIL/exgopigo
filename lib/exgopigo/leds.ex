@@ -17,25 +17,39 @@ defmodule ExGoPiGo.LEDs do
   @led_left  1
   @led_right 0
 
-  def turnOffLeftLED(pid) do
-    setLED(pid, @led_left_pin, 0)
+  def blink(0) do
   end
 
-  def turnOffRightLED(pid) do
-    setLED(pid, @led_right_pin, 0)
+  def blink(count) do
+    turnOnLeftLED()
+    turnOnRightLED()
+    :timer.sleep(500)
+
+    turnOffLeftLED()
+    turnOffRightLED()
+    :timer.sleep(500)
+
+    blink(count - 1)
   end
 
-  def turnOnLeftLED(pid) do
-    setLED(pid, @led_left_pin, 1)
+  def turnOffLeftLED() do
+    setLED(@led_left_pin, 0)
   end
 
-  def turnOnRightLED(pid) do
-    setLED(pid, @led_right_pin, 1)
+  def turnOffRightLED() do
+    setLED(@led_right_pin, 0)
   end
 
-  defp setLED(pid, led, on) do
-    # I2c.write(pid, <<@digital_write_cmd, led, on, 0>>)
-    Board.digitalWrite(pid, led, on)
+  def turnOnLeftLED() do
+    setLED(@led_left_pin, 1)
+  end
+
+  def turnOnRightLED() do
+    setLED(@led_right_pin, 1)
+  end
+
+  defp setLED(led, on) do
+    Board.digital_write(led, on)
   end
 
 end

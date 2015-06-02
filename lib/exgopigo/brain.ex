@@ -4,6 +4,8 @@ defmodule ExGoPiGo.Brain do
 	alias ExGoPiGo.Servo
 	alias ExGoPiGo.UltraSonicSensor
 	alias ExGoPiGo.Compass
+	alias ExGoPiGo.Motors
+
 	require Logger
 
 	@moduledoc """
@@ -16,9 +18,8 @@ defmodule ExGoPiGo.Brain do
 	Return the process ID for the GoPiGoBoard
 	"""
 	def init() do
-		pid = Board.init()
+		{ :ok, pid } = Board.start_link()
 		Compass.start_link()
-		status_report(pid)
 		pid
 	end
 
@@ -26,35 +27,66 @@ defmodule ExGoPiGo.Brain do
 	The control loop for our robot. Continuously waits for sensor messages and responds to them.
 	"""
 	def run(pid) do
-		LEDs.turnOnLeftLED(pid)
-		:timer.sleep(1000)
-		LEDs.turnOffLeftLED(pid)
-		:timer.sleep(1000)
-		LEDs.turnOnRightLED(pid)
-		:timer.sleep(1000)
-		LEDs.turnOffRightLED(pid)
-
-		Servo.turn_to_degrees(pid, 0)
-		:timer.sleep(1000)
-		Servo.turn_to_degrees(pid, 180)
-		:timer.sleep(1000)
-		Servo.turn_to_degrees(pid, 90)
-		:timer.sleep(500)
-
-		# test_servo(pid, 0)
-
-		Logger.info "Distance is #{UltraSonicSensor.distance(pid)} cm."
+		status_report(pid)
+		LEDs.blink(2)
+		shake_head(pid, 2)
+		# dance(pid)
 	end
 
   def status_report(pid) do
-    Logger.info "GoPiGo Firmware v#{Board.firmware_version(pid)}"
-    Logger.info "Power: #{Board.voltage(pid)} volts"
-    { encoder_status, timeout_status } = Board.read_status(pid)
-    Logger.info "Status: #{encoder_status}, #{timeout_status}"
-    Logger.info "Encoder Status: #{Board.read_encoder_status(pid)}"
-    Logger.info "Timeout Status: #{Board.read_timeout_status(pid)}"
-    Logger.info "Compass Heading: #{Compass.heading} degrees."
+    Logger.info "GoPiGo Firmware v#{Board.firmware_version()}"
+    Logger.info "Power: #{Board.voltage()} volts"
+    Logger.info "Encoder Status: #{Board.read_encoder_status()}"
+    Logger.info "Timeout Status: #{Board.read_timeout_status()}"
+    Logger.info "Heading: #{Compass.heading} degrees."
+		Logger.info "Distance: #{UltraSonicSensor.distance(pid)} cm."
   end
+
+  def shake_head(pid, 0) do
+		Servo.turn_to_degrees(pid, 90)
+		:timer.sleep(500)
+  end
+
+  def shake_head(pid, count) do
+		Servo.turn_to_degrees(pid, 60)
+		:timer.sleep(500)
+		Servo.turn_to_degrees(pid, 120)
+		:timer.sleep(500)
+
+		shake_head(pid, count - 1)
+  end
+
+  def dance(pid) do
+  	Motors.forward(pid)
+  	:timer.sleep(500)
+  	Motors.backward(pid)
+  	:timer.sleep(500)
+
+  	Motors.forward(pid)
+  	:timer.sleep(500)
+  	Motors.backward(pid)
+  	:timer.sleep(500)
+
+  	# heading = Compass.heading
+  	# Logger.info "Starting heading: #{heading}"
+  	Motors.right_rotate(pid)
+  	:timer.sleep(2000)
+  	# rotate_until(pid, heading)
+
+  	Motors.stop(pid)
+  end
+
+  def rotate_until(pid, heading) do
+  	:timer.sleep(500)
+  	current = Compass.heading
+  	Logger.info "Current heading: #{current}"
+  	if abs(current - heading) < 5.0 do
+  		Logger.info "Reached heading #{heading} degrees"
+  		Motors.stop(pid)
+  	else
+  		rotate_until(pid, heading)
+  	end
+	end
 
 	def test_servo(pid, degrees) do
 		Servo.turn_to_degrees(pid, degrees)
