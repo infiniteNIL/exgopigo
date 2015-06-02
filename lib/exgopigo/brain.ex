@@ -3,6 +3,7 @@ defmodule ExGoPiGo.Brain do
 	alias ExGoPiGo.LEDs
 	alias ExGoPiGo.Servo
 	alias ExGoPiGo.UltraSonicSensor
+	alias ExGoPiGo.Compass
 	require Logger
 
 	@moduledoc """
@@ -15,7 +16,10 @@ defmodule ExGoPiGo.Brain do
 	Return the process ID for the GoPiGoBoard
 	"""
 	def init() do
-		Board.init()
+		pid = Board.init()
+		Compass.start_link()
+		status_report(pid)
+		pid
 	end
 
 	@doc """
@@ -30,17 +34,27 @@ defmodule ExGoPiGo.Brain do
 		:timer.sleep(1000)
 		LEDs.turnOffRightLED(pid)
 
-		# Servo.turn_to_degrees(pid, 0)
-		# :timer.sleep(1000)
-		# Servo.turn_to_degrees(pid, 180)
-		# :timer.sleep(1000)
-		# Servo.turn_to_degrees(pid, 90)
-		# :timer.sleep(500)
+		Servo.turn_to_degrees(pid, 0)
+		:timer.sleep(1000)
+		Servo.turn_to_degrees(pid, 180)
+		:timer.sleep(1000)
+		Servo.turn_to_degrees(pid, 90)
+		:timer.sleep(500)
 
-		test_servo(pid, 0)
+		# test_servo(pid, 0)
 
 		Logger.info "Distance is #{UltraSonicSensor.distance(pid)} cm."
 	end
+
+  def status_report(pid) do
+    Logger.info "GoPiGo Firmware v#{Board.firmware_version(pid)}"
+    Logger.info "Power: #{Board.voltage(pid)} volts"
+    { encoder_status, timeout_status } = Board.read_status(pid)
+    Logger.info "Status: #{encoder_status}, #{timeout_status}"
+    Logger.info "Encoder Status: #{Board.read_encoder_status(pid)}"
+    Logger.info "Timeout Status: #{Board.read_timeout_status(pid)}"
+    Logger.info "Compass Heading: #{Compass.heading} degrees."
+  end
 
 	def test_servo(pid, degrees) do
 		Servo.turn_to_degrees(pid, degrees)
