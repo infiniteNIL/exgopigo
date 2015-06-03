@@ -10,7 +10,7 @@ defmodule ExGoPiGo.UltraSonicSensor do
 	#		pin -> 	Pin number on which the US sensor is connected
 	#	return:		distance in cm
 	def distance(pid) do
-		Board.write_i2c_block(pid, <<@us_cmd, @sensor_pin, 0, 0>>)
+		Board.write_i2c_block(<<@us_cmd, @sensor_pin, 0, 0>>)
 		:timer.sleep(80)
 		try do
 			<<b1>> = I2c.read(pid, 1)

@@ -38,8 +38,8 @@ defmodule ExGoPiGo.Motors do
 	end
 		
 	# Move the GoPiGo forward
-	def forward(pid) do
-		Board.write_i2c_block(pid, <<@motor_fwd_cmd, 0, 0, 0>>)
+	def forward() do
+		Board.write_i2c_block(<<@motor_fwd_cmd, 0, 0, 0>>)
 	end
 		
 	# Move the GoPiGo forward without PID
@@ -48,8 +48,8 @@ defmodule ExGoPiGo.Motors do
 	end
 
 	# Move GoPiGo back
-	def backward(pid) do
-		Board.write_i2c_block(pid, <<@motor_bwd_cmd, 0, 0, 0>>)
+	def backward() do
+		Board.write_i2c_block(<<@motor_bwd_cmd, 0, 0, 0>>)
 	end
 
 	# Move GoPiGo back without PID control
@@ -73,13 +73,13 @@ defmodule ExGoPiGo.Motors do
 	end
 
 	# Rotate GoPiGo right in same position both motors moving in the opposite direction)
-	def right_rotate(pid) do
-		Board.write_i2c_block(pid, <<@right_rot_cmd, 0, 0, 0>>)
+	def right_rotate() do
+		Board.write_i2c_block(<<@right_rot_cmd, 0, 0, 0>>)
 	end
 
 	# Stop the GoPiGo
-	def stop(pid) do
-		Board.write_i2c_block(pid, <<@stop_cmd, 0, 0, 0>>)
+	def stop() do
+		Board.write_i2c_block(<<@stop_cmd, 0, 0, 0>>)
 	end
 		
 	# Increase the speed

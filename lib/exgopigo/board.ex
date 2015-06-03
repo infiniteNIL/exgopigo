@@ -86,6 +86,14 @@ defmodule ExGoPiGo.Board do
 		GenServer.call(__MODULE__, { :digital_write, pin, value })
 	end
 
+	def read(count) do
+		GenServer.call(__MODULE__, { :read, count })
+	end
+
+ 	def write_i2c_block(block) do
+ 		GenServer.call(__MODULE__, { :write_i2c_block, block})
+ 	end
+
 	#####
 	# GenServer Implementation
 
@@ -139,6 +147,14 @@ defmodule ExGoPiGo.Board do
 		{ :reply, digitalWrite(pid, pin, value), pid }
 	end
 		 
+	def handle_call({:write_i2c_block, block}, _from, pid) do
+		{ :reply, write_i2c_block(pid, block), pid }
+	end
+
+	def handle_call({:read, count}, _from, pid) do
+		{ :reply, I2c.read(pid, count), pid }
+	end
+
 	# Read the status register on the GoPiGo
 	#	Gets a byte, b0 - enc_status
 	#							 b1 - timeout_status
@@ -162,7 +178,7 @@ defmodule ExGoPiGo.Board do
     false # -2
   end
 
-  def read_i2c_block(pid, count) do
+  defp read_i2c_block(pid, count) do
     try do
       I2c.read(pid, count)
     rescue
@@ -171,7 +187,7 @@ defmodule ExGoPiGo.Board do
   end
 
   # Write I2C block
-  def write_i2c_block(pid, block) do
+  defp write_i2c_block(pid, block) do
     try do
       :ok = I2c.write(pid, block)
       true	# 1

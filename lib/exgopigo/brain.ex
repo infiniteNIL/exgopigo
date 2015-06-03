@@ -29,8 +29,8 @@ defmodule ExGoPiGo.Brain do
 	def run(pid) do
 		status_report(pid)
 		LEDs.blink(2)
-		shake_head(pid, 2)
-		# dance(pid)
+		shake_head(2)
+		dance()
 	end
 
   def status_report(pid) do
@@ -42,38 +42,38 @@ defmodule ExGoPiGo.Brain do
 		Logger.info "Distance: #{UltraSonicSensor.distance(pid)} cm."
   end
 
-  def shake_head(pid, 0) do
-		Servo.turn_to_degrees(pid, 90)
+  def shake_head(0) do
+		Servo.turn_to_degrees(90)
 		:timer.sleep(500)
   end
 
-  def shake_head(pid, count) do
-		Servo.turn_to_degrees(pid, 60)
+  def shake_head(count) do
+		Servo.turn_to_degrees(60)
 		:timer.sleep(500)
-		Servo.turn_to_degrees(pid, 120)
+		Servo.turn_to_degrees(120)
 		:timer.sleep(500)
 
-		shake_head(pid, count - 1)
+		shake_head(count - 1)
   end
 
-  def dance(pid) do
-  	Motors.forward(pid)
+  def dance() do
+  	Motors.forward()
   	:timer.sleep(500)
-  	Motors.backward(pid)
+  	Motors.backward()
   	:timer.sleep(500)
 
-  	Motors.forward(pid)
+  	Motors.forward()
   	:timer.sleep(500)
-  	Motors.backward(pid)
+  	Motors.backward()
   	:timer.sleep(500)
 
   	# heading = Compass.heading
   	# Logger.info "Starting heading: #{heading}"
-  	Motors.right_rotate(pid)
+  	Motors.right_rotate()
   	:timer.sleep(2000)
   	# rotate_until(pid, heading)
 
-  	Motors.stop(pid)
+  	Motors.stop()
   end
 
   def rotate_until(pid, heading) do
@@ -88,11 +88,11 @@ defmodule ExGoPiGo.Brain do
   	end
 	end
 
-	def test_servo(pid, degrees) do
-		Servo.turn_to_degrees(pid, degrees)
+	def test_servo(degrees) do
+		Servo.turn_to_degrees(degrees)
 		:timer.sleep(250)
 		if degrees + 30 <= 180 do
-			test_servo(pid, degrees + 30)
+			test_servo(degrees + 30)
 		end
 	end
 
