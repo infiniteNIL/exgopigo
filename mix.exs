@@ -31,8 +31,9 @@ defmodule ExGoPiGo.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      { :elixir_ale,  "~> 0.3.0" },
-      { :ex_doc,      github: "elixir-lang/ex_doc" }
+      { :elixir_ale,      "~> 0.3.0" },
+      { :ex_doc,          github: "elixir-lang/ex_doc" },
+      { :"erlang-serial", github: "knewter/erlang-serial" }
     ]
   end
 
