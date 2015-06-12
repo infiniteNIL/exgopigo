@@ -1,14 +1,40 @@
 defmodule ExGoPiGo.GPS do
+	use GenServer
 	require Logger
 
 	# The GPS module used is a Grove GPS module http://www.seeedstudio.com/depot/Grove-GPS-p-959.html
 	# Refer to SIM28 NMEA spec file http://www.seeedstudio.com/wiki/images/a/a0/SIM28_DATA_File.zip
 
-	def init() do
-		:serial.start([speed: 9600, open: :erlang.bitstring_to_list("/dev/ttyAMA0")])
+	#####
+	# External API
+
+	@doc """
+	Initialize the GPS
+	"""
+	def start_link() do
+		GenServer.start_link(__MODULE__, [], name: __MODULE__)
 	end
 
-	def location(pid) do
+	@doc """
+	Get the current location
+	"""
+	def location() do
+		GenServer.call __MODULE__, :location
+	end
+
+	#####
+	# GenServer Implementation
+
+	def init() do
+		pid = :serial.start([speed: 9600, open: :erlang.bitstring_to_list("/dev/ttyAMA0")])
+		{:ok, pid}
+	end
+
+	def handle_call(:location, _from, pid) do
+		{ :reply, location(pid), pid }
+	end
+
+	defp location(pid) do
 		[_, lat_str, lat_ns, long_str, long_ew, _, _, _] = read_data(pid)
 
 		lat = String.to_float(lat_str) |> negate_if_needed(lat_ns) |> decimal_degrees

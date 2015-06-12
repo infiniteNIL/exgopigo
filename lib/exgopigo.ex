@@ -5,9 +5,8 @@ defmodule ExGoPiGo do
   # GoPiGo Commands
 
   def main(_argv) do
-    # TODO: Better way to manage state (pid)
-    pid = setup()
-    run(pid)
+    setup()
+    run()
     cleanup()
   end
 
@@ -17,8 +16,8 @@ defmodule ExGoPiGo do
     Brain.init()
   end
 
-  defp run(pid) do
-    Brain.run(pid)
+  defp run() do
+    Brain.run()
   end
 
   defp cleanup() do

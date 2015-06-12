@@ -1,10 +1,13 @@
 defmodule ExGoPiGo.Brain do
+	use GenServer
+
 	alias ExGoPiGo.Board
 	alias ExGoPiGo.LEDs
 	alias ExGoPiGo.Servo
 	alias ExGoPiGo.UltraSonicSensor
 	alias ExGoPiGo.Compass
 	alias ExGoPiGo.Motors
+	alias ExGoPiGo.GPS
 
 	require Logger
 
@@ -12,34 +15,53 @@ defmodule ExGoPiGo.Brain do
 	The brain for our robot. Controls and responds to all the sensors, motors, etc.
 	"""
 
+	#####
+	# External API
+
+	@doc """
+	Initialize the Brain
+	"""
+	def start_link() do
+		GenServer.start_link(__MODULE__, [], name: __MODULE__)
+	end
+
+	def run() do
+		GenServer.cast __MODULE__, :run
+	end
+
+	############
+	# GenServer Implementation
+
 	@doc """
 	Initialize the robot's brain.
 
 	Return the process ID for the GoPiGoBoard
 	"""
 	def init() do
-		{ :ok, pid } = Board.start_link()
+		{ :ok, board_pid } = Board.start_link()
 		Compass.start_link()
-		pid
+		GPS.start_link()
+		{ :ok, board_pid }
 	end
 
 	@doc """
 	The control loop for our robot. Continuously waits for sensor messages and responds to them.
 	"""
-	def run(pid) do
-		status_report(pid)
+	def handle_cast(:run, _board_pid) do
+		status_report()
 		LEDs.blink(2)
 		shake_head(2)
 		dance()
 	end
 
-  def status_report(pid) do
+  def status_report() do
     Logger.info "GoPiGo Firmware v#{Board.firmware_version()}"
     Logger.info "Power: #{Board.voltage()} volts"
     Logger.info "Encoder Status: #{Board.read_encoder_status()}"
     Logger.info "Timeout Status: #{Board.read_timeout_status()}"
+    Logger.info "GPS Location: #{GPS.loation()}"
     Logger.info "Heading: #{Compass.heading} degrees."
-		Logger.info "Distance: #{UltraSonicSensor.distance(pid)} cm."
+		Logger.info "Distance: #{UltraSonicSensor.distance()} cm."
   end
 
   def shake_head(0) do
