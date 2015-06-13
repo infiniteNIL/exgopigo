@@ -25,7 +25,7 @@ defmodule ExGoPiGo.GPS do
 	#####
 	# GenServer Implementation
 
-	def init() do
+	def init(_) do
 		pid = :serial.start([speed: 9600, open: :erlang.bitstring_to_list("/dev/ttyAMA0")])
 		{:ok, pid}
 	end
