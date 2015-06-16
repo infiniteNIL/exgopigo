@@ -59,7 +59,8 @@ defmodule ExGoPiGo.Brain do
     Logger.info "Power: #{Board.voltage()} volts"
     Logger.info "Encoder Status: #{Board.read_encoder_status()}"
     Logger.info "Timeout Status: #{Board.read_timeout_status()}"
-    Logger.info "GPS Location: #{GPS.loation()}"
+    {lat, long} = GPS.location()
+    Logger.info "GPS Location: #{lat}, #{long}"
     Logger.info "Heading: #{Compass.heading} degrees."
 		Logger.info "Distance: #{UltraSonicSensor.distance()} cm."
   end
