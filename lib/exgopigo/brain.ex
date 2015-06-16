@@ -37,7 +37,7 @@ defmodule ExGoPiGo.Brain do
 
 	Return the process ID for the GoPiGoBoard
 	"""
-	def init() do
+	def init(_) do
 		{ :ok, board_pid } = Board.start_link()
 		Compass.start_link()
 		GPS.start_link()
