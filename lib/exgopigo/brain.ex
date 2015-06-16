@@ -47,11 +47,12 @@ defmodule ExGoPiGo.Brain do
 	@doc """
 	The control loop for our robot. Continuously waits for sensor messages and responds to them.
 	"""
-	def handle_cast(:run, _board_pid) do
+	def handle_cast(:run, state) do
 		status_report()
 		LEDs.blink(2)
 		shake_head(2)
 		dance()
+		{ :stop, :normal, state }
 	end
 
   def status_report() do
