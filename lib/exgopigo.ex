@@ -13,7 +13,7 @@ defmodule ExGoPiGo do
   defp setup() do
     # TODO: Treat Brain as an app (i.e. automatically started in mix.exs)
     Logger.info "Exy is starting up."
-    Brain.init()
+    Brain.start_link()
   end
 
   defp run() do
