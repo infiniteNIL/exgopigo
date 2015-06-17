@@ -25,10 +25,6 @@ defmodule ExGoPiGo.Brain do
 		GenServer.start_link(__MODULE__, [], name: __MODULE__)
 	end
 
-	def run() do
-		GenServer.cast __MODULE__, :run
-	end
-
 	############
 	# GenServer Implementation
 
@@ -38,24 +34,15 @@ defmodule ExGoPiGo.Brain do
 	Return the process ID for the GoPiGoBoard
 	"""
 	def init(_) do
-		{ :ok, board_pid } = Board.start_link()
-		Compass.start_link()
-		GPS.start_link()
-		{ :ok, board_pid }
-	end
-
-	@doc """
-	The control loop for our robot. Continuously waits for sensor messages and responds to them.
-	"""
-	def handle_cast(:run, state) do
+		Logger.info "Exy is starting up."
+		{ :ok, _ } = Board.start_link()
+		{ :ok, _ } = Compass.start_link()
+		{ :ok, _ } = GPS.start_link()
 		status_report()
-		LEDs.blink(2)
-		shake_head(2)
-		dance()
-		{ :stop, :normal, state }
+		{ :ok, [] }
 	end
 
-  def status_report() do
+  defp status_report() do
     Logger.info "GoPiGo Firmware v#{Board.firmware_version()}"
     Logger.info "Power: #{Board.voltage()} volts"
     Logger.info "Encoder Status: #{Board.read_encoder_status()}"
@@ -66,12 +53,28 @@ defmodule ExGoPiGo.Brain do
 		Logger.info "Distance: #{UltraSonicSensor.distance()} cm."
   end
 
-  def shake_head(0) do
+	@doc """
+	Start the control loop for our robot. Continuously waits for sensor messages and responds to them.
+	Returns the pid of the background run loop task
+	"""
+  def run() do
+  	run_loop()
+  	shutdown()
+  end
+
+	defp run_loop() do
+		Motors.stop()
+		LEDs.blink(2)
+		shake_head(2)
+		dance()
+	end
+
+  defp shake_head(0) do
 		Servo.turn_to_degrees(90)
 		:timer.sleep(500)
   end
 
-  def shake_head(count) do
+  defp shake_head(count) do
 		Servo.turn_to_degrees(60)
 		:timer.sleep(500)
 		Servo.turn_to_degrees(120)
@@ -80,7 +83,7 @@ defmodule ExGoPiGo.Brain do
 		shake_head(count - 1)
   end
 
-  def dance() do
+  defp dance() do
   	Motors.forward()
   	:timer.sleep(500)
   	Motors.backward()
@@ -93,14 +96,14 @@ defmodule ExGoPiGo.Brain do
 
   	# heading = Compass.heading
   	# Logger.info "Starting heading: #{heading}"
-  	Motors.right_rotate()
-  	:timer.sleep(2000)
+  	#Motors.right_rotate()
+  	#:timer.sleep(2000)
   	# rotate_until(pid, heading)
 
   	Motors.stop()
   end
 
-  def rotate_until(pid, heading) do
+  defp rotate_until(pid, heading) do
   	:timer.sleep(500)
   	current = Compass.heading
   	Logger.info "Current heading: #{current}"
@@ -112,12 +115,16 @@ defmodule ExGoPiGo.Brain do
   	end
 	end
 
-	def test_servo(degrees) do
+	defp test_servo(degrees) do
 		Servo.turn_to_degrees(degrees)
 		:timer.sleep(250)
 		if degrees + 30 <= 180 do
 			test_servo(degrees + 30)
 		end
+	end
+
+	defp shutdown() do
+		Logger.info "Exy is shutting down."
 	end
 
 end

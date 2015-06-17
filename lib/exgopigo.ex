@@ -1,27 +1,10 @@
 defmodule ExGoPiGo do
+  use Application
   alias ExGoPiGo.Brain
-  require Logger
 
-  # GoPiGo Commands
-
-  def main(_argv) do
-    setup()
-    run()
-    cleanup()
-  end
-
-  defp setup() do
-    # TODO: Treat Brain as an app (i.e. automatically started in mix.exs)
-    Logger.info "Exy is starting up."
-    Brain.start_link()
-  end
-
-  defp run() do
-    Brain.run()
-  end
-
-  defp cleanup() do
-    Logger.info "Exy is shutting down."
+  def start(_type, _args) do
+    {:ok, _pid} = Brain.start_link()
+    Task.start_link(&Brain.run/0)
   end
 
 end
