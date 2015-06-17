@@ -56,9 +56,9 @@ defmodule ExGoPiGo.GPS do
 			# GGA data , packet 1, has all the data we need
 			{:data, "$GPGGA" <> rest} -> 
 				line = readline(pid, "$GPGGA" <> rest)
-				Logger.info line
+				Logger.debug line
 				[_, time, lat_string, lat_ns, long_str, long_ew, fix_status, satellite_count, altitude, _, _, _, _, _, _] = String.split(line, ",")
-				Logger.info "Time: #{time}, Fix status: #{fix_status}, Sats in view: #{satellite_count}, Altitude: #{altitude}, Lat: #{lat_string} #{lat_ns}, Long: #{long_str} #{long_ew}"
+				Logger.debug "Time: #{time}, Fix status: #{fix_status}, Sats in view: #{satellite_count}, Altitude: #{altitude}, Lat: #{lat_string} #{lat_ns}, Long: #{long_str} #{long_ew}"
 				[time, lat_string, lat_ns, long_str, long_ew, fix_status, satellite_count, altitude]
 
 			_ -> 

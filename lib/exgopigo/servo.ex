@@ -10,7 +10,7 @@ defmodule ExGoPiGo.Servo do
 	#	arg:
 	#		position: angle in degrees to set the servo at
 	def turn_to_degrees(degrees) do
-		Logger.info "Turning servo to #{degrees} degrees."
+		Logger.debug "Turning servo to #{degrees} degrees."
 		Board.write_i2c_block(<<@servo_cmd, degrees, 0, 0>>)
 	end
 
